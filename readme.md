@@ -1,6 +1,4 @@
-# Panduan Migrasi Database untuk User Service
-
-Dokumentasi ini menjelaskan langkah-langkah yang perlu dilakukan untuk menjalankan migrasi dan setup database PostgreSQL untuk aplikasi User Service. Panduan ini mencakup pembuatan ekstensi \`uuid-ossp\` dan pembuatan tabel \`users\` yang diperlukan dalam aplikasi.
+# Product Service
 
 ## 1. Persiapan
 
@@ -19,7 +17,7 @@ Untuk melakukan koneksi ke PostgreSQL, pastikan kamu menggunakan \`host=localhos
 Untuk mendukung penggunaan tipe data UUID di PostgreSQL, pastikan ekstensi \`uuid-ossp\` sudah diaktifkan. Jalankan perintah berikut pada database PostgreSQL untuk mengaktifkan ekstensi \`uuid-ossp\`:
 
 ```sql
-CREATE DATABASE user_db;
+CREATE DATABASE geb1_product_service;
 ```
 
 ```sql
@@ -28,14 +26,16 @@ CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";
 
 Ekstensi ini digunakan untuk menghasilkan UUID secara otomatis.
 
-## 3. Persiapan Tabel Users
+## 3. Persiapan Tabel products
 
 ```sql
-CREATE TABLE users (
+CREATE TABLE products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL,
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password TEXT NOT NULL,
+    price NUMERIC(10, 2) NOT NULL,
+    description TEXT,
+    qty INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -47,6 +47,8 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 ## How to generate from proto file
+
+export PATH="$PATH:$(go env GOPATH)/bin"
 
 protoc --proto_path=proto --go_out=proto --go_opt=paths=source_relative proto/product/product.proto
 protoc --proto_path=proto --go-grpc_out=proto --go-grpc_opt=paths=source_relative proto/product/product.proto

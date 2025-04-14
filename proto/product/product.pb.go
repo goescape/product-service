@@ -23,7 +23,7 @@ const (
 
 type ProductInsertRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        uint32                 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Price         float32                `protobuf:"fixed32,3,opt,name=price,proto3" json:"price,omitempty"`
 	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
@@ -62,11 +62,11 @@ func (*ProductInsertRequest) Descriptor() ([]byte, []int) {
 	return file_proto_product_product_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ProductInsertRequest) GetUserId() uint32 {
+func (x *ProductInsertRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *ProductInsertRequest) GetName() string {
@@ -143,8 +143,8 @@ func (x *ProductInsertResponse) GetMsg() string {
 
 type Product struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId        uint32                 `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Price         float32                `protobuf:"fixed32,4,opt,name=price,proto3" json:"price,omitempty"`
 	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
@@ -183,18 +183,18 @@ func (*Product) Descriptor() ([]byte, []int) {
 	return file_proto_product_product_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Product) GetId() uint32 {
+func (x *Product) GetId() string {
 	if x != nil {
 		return x.Id
 	}
-	return 0
+	return ""
 }
 
-func (x *Product) GetUserId() uint32 {
+func (x *Product) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
-	return 0
+	return ""
 }
 
 func (x *Product) GetName() string {
@@ -403,7 +403,7 @@ const file_proto_product_product_proto_rawDesc = "" +
 	"\n" +
 	"\x1bproto/product/product.proto\x12\x05proto\"\x8d\x01\n" +
 	"\x14ProductInsertRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\rR\x06userId\x12\x12\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05price\x18\x03 \x01(\x02R\x05price\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x10\n" +
@@ -411,8 +411,8 @@ const file_proto_product_product_proto_rawDesc = "" +
 	"\x15ProductInsertResponse\x12\x10\n" +
 	"\x03msg\x18\x01 \x01(\tR\x03msg\"\x90\x01\n" +
 	"\aProduct\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\rR\x06userId\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x14\n" +
 	"\x05price\x18\x04 \x01(\x02R\x05price\x12 \n" +
 	"\vdescription\x18\x05 \x01(\tR\vdescription\x12\x10\n" +

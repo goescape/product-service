@@ -5,7 +5,7 @@ package proto;
 option go_package = "proto/product";
 
 message ProductInsertRequest {
-    uint32 user_id = 1;
+    string user_id = 1;
     string name = 2;
     float price = 3;
     string description = 4;
@@ -17,8 +17,8 @@ message ProductInsertResponse {
 }
 
 message Product {
-    uint32 id = 1;
-    uint32 user_id = 2;
+    string id = 1;
+    string user_id = 2;
     string name = 3;
     float price = 4;
     string description = 5;

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"log"
 	"product-svc/proto/product"
 	repository "product-svc/repository/product"
 )
@@ -26,6 +27,7 @@ type ProductUsecase interface {
 func (u *usecase) InsertProduct(ctx context.Context, req *product.ProductInsertRequest) (*product.ProductInsertResponse, error) {
 	resp, err := u.repo.InsertProduct(ctx, req)
 	if err != nil {
+		log.Default().Println("failed to insert product:", err)
 		return nil, err
 	}
 
@@ -35,6 +37,7 @@ func (u *usecase) InsertProduct(ctx context.Context, req *product.ProductInsertR
 func (u *usecase) ListProduct(ctx context.Context, req *product.ListProductRequest) (*product.ListProductResponse, error) {
 	resp, err := u.repo.ListProduct(ctx, req)
 	if err != nil {
+		log.Default().Println("failed to list product:", err)
 		return nil, err
 	}
 

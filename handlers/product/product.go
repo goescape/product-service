@@ -22,5 +22,12 @@ func (h *Handler) InsertProduct(ctx context.Context, req *product.ProductInsertR
 }
 
 func (h *Handler) ListProduct(ctx context.Context, req *product.ListProductRequest) (*product.ListProductResponse, error) {
+	if req.Limit < 1 {
+		req.Limit = 10
+	}
+	if req.Page < 1 {
+		req.Page = 1
+	}
+
 	return h.usecase.ListProduct(ctx, req)
 }
