@@ -22,6 +22,7 @@ var _ ProductUsecase = &usecase{}
 type ProductUsecase interface {
 	InsertProduct(ctx context.Context, req *product.ProductInsertRequest) (*product.ProductInsertResponse, error)
 	ListProduct(ctx context.Context, req *product.ListProductRequest) (*product.ListProductResponse, error)
+	ReduceProduct(ctx context.Context, req *product.ReduceProductsRequest) (*product.ReduceProductsResponse, error)
 }
 
 func (u *usecase) InsertProduct(ctx context.Context, req *product.ProductInsertRequest) (*product.ProductInsertResponse, error) {
@@ -38,6 +39,16 @@ func (u *usecase) ListProduct(ctx context.Context, req *product.ListProductReque
 	resp, err := u.repo.ListProduct(ctx, req)
 	if err != nil {
 		log.Default().Println("failed to list product:", err)
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (u *usecase) ReduceProduct(ctx context.Context, req *product.ReduceProductsRequest) (*product.ReduceProductsResponse, error) {
+	resp, err := u.repo.ReduceProduct(ctx, req)
+	if err != nil {
+		log.Default().Println("failed to reduce product:", err)
 		return nil, err
 	}
 

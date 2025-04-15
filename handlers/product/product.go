@@ -31,3 +31,7 @@ func (h *Handler) ListProduct(ctx context.Context, req *product.ListProductReque
 
 	return h.usecase.ListProduct(ctx, req)
 }
+
+func (h *Handler) ReduceProducts(ctx context.Context, req *product.ReduceProductsRequest) (*product.ReduceProductsResponse, error) {
+	return h.usecase.ReduceProduct(ctx, req)
+}

@@ -5,6 +5,9 @@ import (
 	"database/sql"
 	"log"
 	"product-svc/proto/product"
+	"strings"
+
+	"github.com/lib/pq"
 )
 
 type store struct {
@@ -22,6 +25,7 @@ var _ ProductRepository = &store{}
 type ProductRepository interface {
 	InsertProduct(ctx context.Context, req *product.ProductInsertRequest) (*product.ProductInsertResponse, error)
 	ListProduct(ctx context.Context, req *product.ListProductRequest) (*product.ListProductResponse, error)
+	ReduceProduct(ctx context.Context, req *product.ReduceProductsRequest) (*product.ReduceProductsResponse, error)
 }
 
 func (s *store) InsertProduct(ctx context.Context, req *product.ProductInsertRequest) (*product.ProductInsertResponse, error) {
@@ -56,6 +60,7 @@ func (s *store) ListProduct(ctx context.Context, req *product.ListProductRequest
 	var (
 		totalData uint32
 		resp      = new(product.ListProductResponse)
+		args      = make([]interface{}, 0)
 	)
 	resp.Items = make([]*product.Product, 0)
 
@@ -69,10 +74,17 @@ func (s *store) ListProduct(ctx context.Context, req *product.ListProductRequest
 			price,
 			qty
 		FROM products
-		LIMIT $1 OFFSET $2
 	`
+	if req.ProductIds == "" {
+		query += `LIMIT $1 OFFSET $2`
+		args = append(args, req.Limit, (req.Page-1)*req.Limit)
+	} else {
+		// example: xx1, xx2, xx3
+		query += `WHERE id = ANY($1)`
+		args = append(args, pq.Array(strings.Split(req.ProductIds, ",")))
+	}
 
-	rows, err := s.db.QueryContext(ctx, query, req.Limit, (req.Page-1)*req.Limit)
+	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		log.Default().Println("failed to query products:", err)
 		return nil, err
@@ -118,4 +130,44 @@ func (s *store) ListProduct(ctx context.Context, req *product.ListProductRequest
 	}
 
 	return resp, nil
+}
+
+func (s *store) ReduceProduct(ctx context.Context, req *product.ReduceProductsRequest) (*product.ReduceProductsResponse, error) {
+	tx, err := s.db.Begin()
+	if err != nil {
+		log.Default().Println("failed to start db transaction:", err)
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	for _, item := range req.Items {
+		query := `UPDATE products SET qty = qty - $1 WHERE id = $2 AND qty >= $1`
+		res, err := tx.ExecContext(ctx, query, item.Qty, item.ProductId)
+		if err != nil {
+			log.Default().Println("failed to update product:", err)
+			return nil, err
+		}
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			log.Default().Println("failed to get rows affected:", err)
+			return nil, err
+		}
+
+		if rowsAffected == 0 {
+			return &product.ReduceProductsResponse{
+				Msg: "Product quantity not sufficient",
+			}, nil
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		log.Default().Println("failed to commit transaction:", err)
+		return nil, err
+	}
+
+	return &product.ReduceProductsResponse{
+		Msg: "Product quantity reduced successfully",
+	}, nil
 }
