@@ -7,6 +7,8 @@ RUN go mod download
 
 COPY . .
 
+COPY config.yaml.docker config.yaml
+
 RUN CGO_ENABLED=0 GOOS=linux go build -v -o server ./main.go
 
 EXPOSE 9090
